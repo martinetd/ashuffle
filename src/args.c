@@ -123,10 +123,10 @@ int ashuffle_options(struct ashuffle_options * opts,
             match_field = NULL;
             state = RULE;
         } else if (state == QUEUE) {
-            opts->queue_only = (unsigned) strtoul(argv[i], NULL, 10);
-            /* Make sure we got a valid queue number */
-            if (errno == EINVAL || errno == ERANGE) {
-                fputs("Error converting queue length to integer.\n", stderr);
+            opts->queue_only = (unsigned) strtoul(argv[i], &match_field, 10);
+            if (match_field == argv[i] || match_field[0] != '\0') {
+                fprintf(stderr, "Error converting queue length '%s' to integer.\n",
+                        argv[i]);
                 return -1;
             }
             state = NO_STATE;
@@ -138,9 +138,10 @@ int ashuffle_options(struct ashuffle_options * opts,
             }
             state = NO_STATE;
         } else if (state == QUEUE_BUFFER) {
-            opts->queue_buffer = (unsigned) strtoul(argv[i], NULL, 10);
-            if (errno == EINVAL || errno == ERANGE) {
-                fputs("Error converting queue buffer length to integer.\n", stderr);
+            opts->queue_buffer = (unsigned) strtoul(argv[i], &match_field, 10);
+            if (match_field == argv[i] || match_field[0] != '\0') {
+                fprintf(stderr, "Error converting queue buffer length '%s' to integer.\n",
+                        argv[i]);
                 return -1;
             }
             state = NO_STATE;
@@ -153,6 +154,9 @@ int ashuffle_options(struct ashuffle_options * opts,
     if (state == RULE_VALUE) {
         fprintf(stderr, "No value supplied for match '%s'.\n", match_field);
         return -1;
+    } else if (state != NO_STATE) {
+        fprintf(stderr, "No argument supplied for '%s'.\n", argv[argc - 1]);
+	return -1;
     }
     /* if we're provisioning a rule right now, flush it */
     flush_rule(state, opts, &rule);
