@@ -129,6 +129,9 @@ class MPD {
     // Add, adds the song wit the given URI to the MPD queue.
     virtual void Add(const std::string& uri) = 0;
 
+    // DeleteRange, deletes a range of song in the queue.
+    virtual void DeleteRange(int start, int stop) = 0;
+
     enum PasswordStatus {
         kAccepted,
         kRejected,
