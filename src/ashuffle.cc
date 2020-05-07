@@ -75,6 +75,12 @@ void TryEnqueue(mpd::MPD *mpd, ShuffleChain *songs, const Options &options) {
         should_add = true;
     }
 
+    /* LOCAL: Delete songs from 2 to however many we need to keep 10 total */
+    int pos = *status->SongPosition();
+    if (pos > 9) {
+        mpd->DeleteRange(1, pos - 8);
+    }
+
     /* Add another song to the list and restart the player */
     if (should_add) {
         if (options.queue_buffer != 0) {
