@@ -137,6 +137,9 @@ class MPD {
         }
     };
 
+    // DeleteRange, deletes a range of song in the queue.
+    virtual void DeleteRange(int start, int stop) = 0;
+
     enum PasswordStatus {
         kAccepted,
         kRejected,

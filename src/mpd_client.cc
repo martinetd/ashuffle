@@ -150,6 +150,7 @@ class MPDImpl : public MPD {
     std::optional<std::unique_ptr<Song>> Search(std::string_view uri) override;
     IdleEventSet Idle(const IdleEventSet&) override;
     void Add(const std::string& uri) override;
+    void DeleteRange(int start, int stop) override;
     MPD::PasswordStatus ApplyPassword(const std::string& password) override;
     Authorization CheckCommands(
         const std::vector<std::string_view>& cmds) override;
@@ -307,6 +308,12 @@ void MPDImpl::Add(const std::string& uri) {
     if (!mpd_run_add(mpd_, uri.data())) {
         Fail();
     }
+}
+
+void MPDImpl::DeleteRange(int start, int stop) {
+     if (!mpd_run_delete_range(mpd_, start, stop)) {
+	     Fail();
+     }
 }
 
 std::unique_ptr<Status> MPDImpl::CurrentStatus() {
